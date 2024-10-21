@@ -1,11 +1,10 @@
 console.log("I'm testing here!!");
 const VERBOSE_FLAG = 1;
-doAllTests();
-
 //place your test functions in this array
 const allTests = [
-  testGraph
+  testcompareArrays
 ];
+doAllTests();
 
 function doAllTests () {
   const groupTests = allTests.map(function(test) {
@@ -41,15 +40,17 @@ function doAllTests () {
   const groupTestMessage = `Total number of group tests: ${numberOfGroupTests}. Number of group tests passed: ${numberOfGrouptTestsPassed}. Number of group tests failed: ${numberOfGrouptTestsFailed}.`;
   const finalMessage = groupTestMessage + totalNumberOfTestsMessage;
   consoleLogResults(allGroupTestsPassed, finalMessage, 0);
+  const verboseFlagGreaterThanOne = VERBOSE_FLAG >= 2;
+  const shouldGoOverTests = notAllGroupTestPassed || verboseFlagGreaterThanOne;
 
-  if (notAllGroupTestPassed) {
+  if (shouldGoOverTests) {
     groupTests.forEach(function(groupTest) {
       const testName = groupTest.testName;
       const results = groupTest.results;
       const groupPassed = results.every(testResult => testResult);
       const groupFailed = groupPassed === false;
       const shouldLogEachTestResultInGroup = groupFailed || VERBOSE_FLAG === 3;
-      const shouldLogGroupTestResult = groupFailed || VERBOSE_FLAG >= 2;
+      const shouldLogGroupTestResult = groupFailed || verboseFlagGreaterThanOne;
 
       if (shouldLogGroupTestResult) {
         consoleLogResults(groupPassed, testName, 1);
