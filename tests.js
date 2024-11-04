@@ -7,9 +7,11 @@ const allTests = [
 doAllTests();
 
 function doAllTests () {
+  const preTestResultsArr = [];
   const groupTests = allTests.map(function(test) {
     const testName = test.name;
     const preTestResults = test();
+    preTestResultsArr.push(preTestResults);
     const expectedResults = preTestResults.expectedResults;
     const actualResults = preTestResults.actualResults;
     const testResults = getTestResults(expectedResults, actualResults);
@@ -44,7 +46,7 @@ function doAllTests () {
   const shouldGoOverTests = notAllGroupTestPassed || verboseFlagGreaterThanOne;
 
   if (shouldGoOverTests) {
-    groupTests.forEach(function(groupTest) {
+    groupTests.forEach(function(groupTest, groupIndex) {
       const testName = groupTest.testName;
       const results = groupTest.results;
       const groupPassed = results.every(testResult => testResult);
@@ -57,8 +59,16 @@ function doAllTests () {
       }
 
       if (shouldLogEachTestResultInGroup) {
-        results.forEach(function(result, index) {
-          consoleLogResults(result, index, 2);
+        results.forEach(function(result, testIndex) {
+          consoleLogResults(result, testIndex, 2);
+          if (result === false) {
+            const preTestResults = preTestResultsArr[groupIndex];
+            const expectedResults = preTestResults.expectedResults;
+            const actualResults = preTestResults.actualResults;
+            const expected = expectedResults[testIndex];
+            const actual = actualResults[testIndex];
+            console.log(`\t\tExpected: ${expected}, actual: ${actual}`);
+          }
         });
         console.log("\n");
       }
